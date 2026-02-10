@@ -14,7 +14,6 @@
 # /vis/geometry/set/colour <logical-volume-name> <depth> <r> <g> <b> <opacity>
 # opacity: 1 = непрозрачно, 0 = полностью прозрачно
 # depth = 0 (только этот LV), depth = -1 (протянуть на всех потомков)
-# :contentReference[oaicite:3]{index=3}
 
 # Скрыть мир (иначе он мешает видеть внутренности)
 # (если не требуется скрывать, а сделать полупрозрачным)
@@ -39,7 +38,6 @@
 /vis/scene/add/trajectories smooth
 /vis/modeling/trajectories/create/drawByCharge
 # Негативные (e-) красным, позитивные зелёным, нейтральные зелёным (может потом поменяю, пока нужды нет)
-# :contentReference[oaicite:4]{index=4}
 /vis/modeling/trajectories/drawByCharge-0/set -1 red
 /vis/modeling/trajectories/drawByCharge-0/set  1 green
 /vis/modeling/trajectories/drawByCharge-0/set  0 green
