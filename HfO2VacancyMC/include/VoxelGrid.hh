@@ -4,14 +4,14 @@
 #include <fstream>
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
+
 #include "G4ThreeVector.hh"
 #include "G4SystemOfUnits.hh"
 
 class VoxelGrid {
 public:
     struct Index3 { int ix, iy, iz; };
-
-    VoxelGrid() = default;
 
     void Configure(const G4ThreeVector& minCorner,
                                  const G4ThreeVector& maxCorner,
@@ -31,15 +31,25 @@ public:
         }
 
         const size_t n = (size_t)fNx * (size_t)fNy * (size_t)fNz;
-        fEdep.assign(n, 0.0);
+        fEdepRun.assign(n, 0.0);
+        fEdepEvent.assign(n, 0.0);
+        fTouchedFlag.assign(n, 0);
         fHasSeedVacancy.assign(n, 0);
 
-        // Seed vacancy at center by default
         SetSeedVacancyAtCenter();
     }
 
-    void ResetAccumulators() {
-        std::fill(fEdep.begin(), fEdep.end(), 0.0);
+    // Event accumulators
+    void ResetEventAccumulators() {
+        for (size_t flat : fTouched) {
+            fEdepEvent[flat] = 0.0;
+            fTouchedFlag[flat] = 0;
+        }
+        fTouched.clear();
+    }
+
+    void ResetRunAccumulators() {
+        std::fill(fEdepRun.begin(), fEdepRun.end(), 0.0);
     }
 
     inline bool Contains(const G4ThreeVector& p) const {
@@ -53,7 +63,6 @@ public:
         idx.ix = (int)std::floor((p.x() - fMin.x()) / fDx);
         idx.iy = (int)std::floor((p.y() - fMin.y()) / fDy);
         idx.iz = (int)std::floor((p.z() - fMin.z()) / fDz);
-        // Clamp (safety)
         idx.ix = std::max(0, std::min(fNx - 1, idx.ix));
         idx.iy = std::max(0, std::min(fNy - 1, idx.iy));
         idx.iz = std::max(0, std::min(fNz - 1, idx.iz));
@@ -64,33 +73,58 @@ public:
         return (size_t)idx.iz + (size_t)fNz * ((size_t)idx.iy + (size_t)fNy * (size_t)idx.ix);
     }
 
+    inline Index3 Unflatten(size_t flat) const {
+        const size_t yz = (size_t)fNy * (size_t)fNz;
+        Index3 idx;
+        idx.ix = (int)(flat / yz);
+        const size_t rem = flat - (size_t)idx.ix * yz;
+        idx.iy = (int)(rem / (size_t)fNz);
+        idx.iz = (int)(rem - (size_t)idx.iy * (size_t)fNz);
+        return idx;
+    }
+
     void AddEdep(const G4ThreeVector& p, G4double edep) {
         if (edep <= 0.0) return;
         if (!Contains(p)) return;
+
         const auto idx = ToIndex(p);
-        fEdep[Flatten(idx)] += edep;
+        const size_t flat = Flatten(idx);
+
+        fEdepRun[flat] += edep;
+        fEdepEvent[flat] += edep;
+
+        if (!fTouchedFlag[flat]) {
+            fTouchedFlag[flat] = 1;
+            fTouched.push_back(flat);
+        }
     }
 
     void SetSeedVacancyAtCenter() {
         if (fNx<=0 || fNy<=0 || fNz<=0) return;
         Index3 c{fNx/2, fNy/2, fNz/2};
         fSeed = c;
+        std::fill(fHasSeedVacancy.begin(), fHasSeedVacancy.end(), 0);
         fHasSeedVacancy[Flatten(c)] = 1;
     }
 
     Index3 GetSeedIndex() const { return fSeed; }
 
-    void ExportCSV(const std::string& path) const {
+    const std::vector<size_t>& GetTouchedVoxels() const { return fTouched; }
+
+    double GetEdepEvent_eV(size_t flat) const { return fEdepEvent[flat] / eV; }
+    double GetEdepRun_eV(size_t flat) const { return fEdepRun[flat] / eV; }
+
+    void ExportEdepCSV(const std::string& path) const {
         std::ofstream out(path);
-        out << "ix,iy,iz,edep_eV,seedVacancy\n";
+        out << "ix,iy,iz,edepRun_eV,seed\n";
         for (int ix=0; ix<fNx; ++ix) {
             for (int iy=0; iy<fNy; ++iy) {
                 for (int iz=0; iz<fNz; ++iz) {
                     Index3 idx{ix,iy,iz};
                     const auto flat = Flatten(idx);
-                    const double edep_eV = fEdep[flat] / eV;
                     out << ix << "," << iy << "," << iz << ","
-                            << edep_eV << "," << (int)fHasSeedVacancy[flat] << "\n";
+                            << GetEdepRun_eV(flat) << ","
+                            << (int)fHasSeedVacancy[flat] << "\n";
                 }
             }
         }
@@ -111,8 +145,11 @@ private:
     G4double fDx{50*nm}, fDy{50*nm}, fDz{1*nm};
     int fNx{0}, fNy{0}, fNz{0};
 
-    std::vector<double> fEdep;                    // Joule in Geant4 units (energy)
-    std::vector<unsigned char> fHasSeedVacancy;
+    std::vector<double> fEdepRun;   // Geant4 energy units
+    std::vector<double> fEdepEvent; // per-event accum
+    std::vector<uint8_t> fTouchedFlag;
+    std::vector<size_t> fTouched;
 
+    std::vector<uint8_t> fHasSeedVacancy;
     Index3 fSeed{0,0,0};
 };

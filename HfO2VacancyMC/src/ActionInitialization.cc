@@ -7,10 +7,13 @@
 
 #include "G4RunManager.hh"
 
+#include "EventAction.hh"
+
 ActionInitialization::ActionInitialization(DetectorConstruction* det) : fDet(det) {}
 
 void ActionInitialization::Build() const {
     SetUserAction(new PrimaryGeneratorAction());
     SetUserAction(new RunAction(fDet));
+    SetUserAction(new EventAction(fDet));
     SetUserAction(new SteppingAction(fDet));
 }

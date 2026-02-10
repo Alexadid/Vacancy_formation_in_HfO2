@@ -4,6 +4,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4Region.hh"
 #include "VoxelGrid.hh"
+#include "VacancyModel.hh"
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
@@ -19,6 +20,9 @@ public:
 
     // Geometry params
     double GetHfO2ThicknessNm() const { return fHfO2ThicknessNm; }
+
+    VacancyModel& GetVacancyModel() { return fVacancy; }
+    const VacancyModel& GetVacancyModel() const { return fVacancy; }
 
 private:
     void DefineMaterials();
@@ -46,4 +50,6 @@ private:
 
     // Voxel grid in HfO2 volume
     VoxelGrid fGrid;
+
+    VacancyModel fVacancy;
 };

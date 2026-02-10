@@ -86,8 +86,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     const G4ThreeVector minCorner(-padXY/2, -padXY/2, -tHf);
     const G4ThreeVector maxCorner(+padXY/2, +padXY/2,    0.0);
 
-    fGrid.Configure(minCorner, maxCorner,
-                                    fVoxelDxNm*nm, fVoxelDyNm*nm, fVoxelDzNm*nm);
+    fGrid.Configure(minCorner, maxCorner, fVoxelDxNm*nm, fVoxelDyNm*nm, fVoxelDzNm*nm);
+    fVacancy.ConfigureFromGrid(fGrid);
 
     // Regions & cuts
     SetupRegionsAndCuts();
