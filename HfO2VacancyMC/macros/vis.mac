@@ -1,0 +1,51 @@
+/vis/verbose warnings
+
+# Окно
+/vis/open OGLSQt
+
+# Рисуем геометрию
+/vis/drawVolume
+/vis/viewer/set/autoRefresh true
+/vis/viewer/set/style surface
+/vis/viewer/set/hiddenEdge true
+
+# Цвета этой самой геометрии
+# Формат:
+# /vis/geometry/set/colour <logical-volume-name> <depth> <r> <g> <b> <opacity>
+# opacity: 1 = непрозрачно, 0 = полностью прозрачно
+# depth = 0 (только этот LV), depth = -1 (протянуть на всех потомков)
+# :contentReference[oaicite:3]{index=3}
+
+# Скрыть мир (иначе он мешает видеть внутренности)
+# (если не требуется скрывать, а сделать полупрозрачным)
+/vis/geometry/set/visibility WorldLV 0 0
+
+# HfO2: ярко-синий, полупрозрачный, solid, видимые рёбра
+/vis/geometry/set/colour HfO2LV 0 0.10 0.35 1.00 0.35
+/vis/geometry/set/forceSolid HfO2LV 0 1
+/vis/geometry/set/forceAuxEdgeVisible HfO2LV 0 1
+/vis/geometry/set/lineWidth HfO2LV 0 2
+
+# Si: светло-серый, лучше wireframe, чтобы видеть тонкий HfO2 сверху
+/vis/geometry/set/colour SiLV 0 0.85 0.85 0.85 0.35
+#/vis/geometry/set/forceWireframe SiLV 0 1
+/vis/geometry/set/lineWidth SiLV 0 2
+
+# Оси
+/vis/scene/add/axes 0 0 0 1 um
+
+# Траектории
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+# Негативные (e-) красным, позитивные зелёным, нейтральные зелёным (может потом поменяю, пока нужды нет)
+# :contentReference[oaicite:4]{index=4}
+/vis/modeling/trajectories/drawByCharge-0/set -1 red
+/vis/modeling/trajectories/drawByCharge-0/set  1 green
+/vis/modeling/trajectories/drawByCharge-0/set  0 green
+
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+
+/vis/viewer/zoom 1.2
+/vis/viewer/update

@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_HfO2VacancyMC_FILE /Users/alexander/Documents/Latex-docs/Studies/8-semester/Vacancy_formation_in_HfO2/HfO2VacancyMC/build/HfO2VacancyMC)
+set(__QT_DEPLOY_TARGET_HfO2VacancyMC_TYPE EXECUTABLE)

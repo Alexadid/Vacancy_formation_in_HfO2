@@ -1,0 +1,20 @@
+/control/verbose 1
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/det/padSizeUm 10
+/det/siThicknessUm 5
+/det/hfo2ThicknessNm 100
+
+/det/voxelDxNm 50
+/det/voxelDyNm 50
+/det/voxelDzNm 1
+
+/gun/energyKeV 15
+/gun/sigmaNm 0
+
+/run/initialize
+/control/execute macros/vis.mac
+
+/run/beamOn 1
