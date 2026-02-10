@@ -13,15 +13,28 @@
 /det/voxelDyNm 1
 /det/voxelDzNm 1
 
-/gun/energyKeV 15
-/gun/sigmaNm 0
+
+/gps/particle e-
+/gps/ene/type Mono
+/gps/ene/mono 15 keV
+
+/gps/pos/type Beam
+/gps/pos/centre 0 0 50 nm
+
+/gps/pos/sigma_x 5 nm # вместо FWHM
+/gps/pos/sigma_y 5 nm
+
+/gps/direction 0 0 -1
+
+
 
 /det/vacConcCm3 1e20
 /det/vacSeed 12345
 /det/hfo2Rho_g_cm3 9.68
 
 
+
 /run/initialize
 /control/execute macros/vis.mac
 
-/run/beamOn 10000
+/run/beamOn 100000
