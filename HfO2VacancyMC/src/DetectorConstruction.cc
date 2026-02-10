@@ -23,6 +23,10 @@ DetectorConstruction::DetectorConstruction() {
     fMessenger->DeclareProperty("voxelDxNm", fVoxelDxNm, "Voxel size X in nm (HfO2 scoring grid)");
     fMessenger->DeclareProperty("voxelDyNm", fVoxelDyNm, "Voxel size Y in nm (HfO2 scoring grid)");
     fMessenger->DeclareProperty("voxelDzNm", fVoxelDzNm, "Voxel size Z in nm (HfO2 scoring grid)");
+
+    fMessenger->DeclareProperty("vacConcCm3", fVacancy.GetParams().initConc_cm3, "Initial oxygen vacancy concentration in cm^-3");
+    fMessenger->DeclareProperty("vacSeed", fVacancy.GetParams().initSeed, "Seed for vacancy initialization");
+    fMessenger->DeclareProperty("hfo2Rho_g_cm3", fVacancy.GetParams().rho_g_cm3, "HfO2 density in g/cm3 (affects max vacancy capacity)");
 }
 
 void DetectorConstruction::DefineMaterials() {

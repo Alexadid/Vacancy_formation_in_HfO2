@@ -24,6 +24,11 @@ public:
     VacancyModel& GetVacancyModel() { return fVacancy; }
     const VacancyModel& GetVacancyModel() const { return fVacancy; }
 
+    void SetInitVacConcCm3(double c) { fVacancy.GetParams().initConc_cm3 = c; }
+    void SetInitVacSeed(uint64_t s)  { fVacancy.GetParams().initSeed = s; }
+    void SetHfO2Density_g_cm3(double rho) { fVacancy.GetParams().rho_g_cm3 = rho; }
+    
+
 private:
     void DefineMaterials();
     void SetupRegionsAndCuts();

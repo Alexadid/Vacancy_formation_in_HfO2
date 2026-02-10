@@ -5,18 +5,23 @@
 
 /cuts/setLowEdge 100 eV
 
-/det/padSizeUm 5
+/det/padSizeUm 1
 /det/siThicknessUm 5
 /det/hfo2ThicknessNm 100
 
-/det/voxelDxNm 5
-/det/voxelDyNm 5
+/det/voxelDxNm 1
+/det/voxelDyNm 1
 /det/voxelDzNm 1
 
 /gun/energyKeV 15
 /gun/sigmaNm 0
 
+/det/vacConcCm3 1e20
+/det/vacSeed 12345
+/det/hfo2Rho_g_cm3 9.68
+
+
 /run/initialize
 /control/execute macros/vis.mac
 
-/run/beamOn 1000
+/run/beamOn 10000
